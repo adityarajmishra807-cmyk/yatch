@@ -1,6 +1,6 @@
 import { FormEvent, useEffect, useRef, useState } from 'react';
 import { ArrowDown, ArrowUpRight, ChevronDown, Instagram, Menu, X } from 'lucide-react';
-import { supabase } from '@/lib/supabase';
+import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 
 const images = {
   couple: '/images/image.png',
@@ -69,6 +69,12 @@ function App() {
       occasion: String(form.get('occasion') ?? '').trim() || null,
       message: String(form.get('message') ?? '').trim() || null,
     };
+
+    if (!isSupabaseConfigured || !supabase) {
+      setSubmitting(false);
+      setError('Enquiry is temporarily unavailable. Please try again later.');
+      return;
+    }
 
     const { error: submitError } = await supabase.from('meridian_enquiries').insert(enquiry);
     setSubmitting(false);
